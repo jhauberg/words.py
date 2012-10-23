@@ -9,6 +9,9 @@ def from_rule(rule, symbols):
 	"""
 	Generates a word that matches the specified rules.
 	"""
+	if not rule or not symbols:
+		return None
+
 	result = []
 
 	for symbol in rule:
@@ -21,25 +24,28 @@ def from_rule(rule, symbols):
 
 			possibilities = symbols[symbol]
 
-			i = random.randint(0, len(possibilities) - 1)
+			next_possibility_index = random.randint(0, len(possibilities) - 1)
 
-			result.append(possibilities[i])
+			result.append(possibilities[next_possibility_index])
 		else:
-			# otherwise, consider it a static part of the word.
+			# otherwise consider it a static part of the word.
 			result.append(symbol)
 
 	return ''.join(result)
 
 def from_rules(ruleset, max_amount):
 	"""
-	Generates `amount` of words from the rules defined in `ruleset`. 
+	Generates up to `max_amount` of words from the rules defined in the file `ruleset`. 
 
-	It is not guaranteed to reach `amount` of words, in case the ruleset does not contain enough unique combinations.
+	It is not guaranteed to reach `max_amount` of words, in case the ruleset does not contain enough unique combinations.
 	In such a case, all possible combinations will be created.
 	"""
 	input = open(ruleset, 'r')
 
-	json_data = json.load(input)
+	try:
+		json_data = json.load(input)
+	except ValueError:
+		json_data = None
 
 	input.close()
 
@@ -47,8 +53,6 @@ def from_rules(ruleset, max_amount):
 		raise Exception(
 				'SyntaxException: the ruleset contains invalid JSON data.'
 			)
-
-		return
 
 	rules = json_data['rules']
 
@@ -71,16 +75,18 @@ def from_rules(ruleset, max_amount):
 
 	while generated_amount < max_amount:
 		# keep going until we've generated as close to max_amount as possible.
-		rule = pairings[random.randint(0, len(pairings) - 1)]
+		next_rule_index = random.randint(0, len(pairings) - 1)
+
+		rule = pairings[next_rule_index]
 
 		result = from_rule(rule, symbols)
 
-		if result in results:
+		if result is not None and result in results:
 			# we have a duplicate, retry.
 			retries += 1
 
 			# just bruteforce it - more retries = more processing time, but also higher
-			# likelyhood of reaching all combinations in case of dupslicates.
+			# likelyhood of reaching all combinations in case of duplicates.
 			# this could definitely be improved :)
 			if retries == 100:
 		 		break
