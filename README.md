@@ -1,8 +1,6 @@
-[Here's the blogpost](http://scriptogr.am/jacob/post/words) explaining some of the madness.
-
 Run from command line:
 
-	python words.py 5 rules/test.json
+	python words.py rules/test.json 5
 
 Output:
 
@@ -49,3 +47,5 @@ Rules are defined using the following JSON structure (rules/test.json):
 			}
 		}
 	}
+
+[Here's the blogpost](http://scriptogr.am/jacob/post/words) explaining some of the madness.
