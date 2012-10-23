@@ -80,7 +80,7 @@ def from_rules(ruleset, max_amount):
 			retries += 1
 
 			# just bruteforce it - more retries = more processing time, but also higher
-			# likelyhood of reaching all combinations in case of duplicates.
+			# likelyhood of reaching all combinations in case of dupslicates.
 			# this could definitely be improved :)
 			if retries == 100:
 		 		break
@@ -99,14 +99,17 @@ def main(argv):
 				'MissingParameterException: the first argument should be a path to a file containing ruleset data in a JSON format.'
 			)
 
+	rules = argv[1]
 	amount = 1
 
 	if len(argv) > 2:
-		amount = int(argv[1])
+		amount = int(argv[2])
 
-	results = from_rules(argv[2], amount)
+	results = from_rules(argv[1], amount)
 
-	print json.dumps(results, sort_keys=True, indent=4)
+	print json.dumps(results, 
+		sort_keys=True, 
+		indent=4)
 
 if __name__ == "__main__":
     main(sys.argv)
