@@ -1,3 +1,5 @@
+## Usage
+
 Run from command line:
 
     python words.py rules/test.json 5
