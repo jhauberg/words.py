@@ -6,33 +6,38 @@ import random
 import json
 
 
-def from_rule(rule, symbols):
+def from_rule(rule, parameters):
     """
     Generates a word that matches the specified rules.
     """
-    if not rule or not symbols:
+    if not rule or not parameters:
         return None
 
-    result = []
+    # Find all parameters that are wrapped in {}
+    matches = re.finditer('\\{(.*?)\\}', rule)
 
-    for symbol in rule:
-        # determine whether the symbol is upper-case, in which case it has
-        # to be replaced with a random word part.
-        if re.match('^[A-Z]$', symbol):
-            if symbol not in symbols:
-                # the replaceable part was not defined in the symbol set.
-                continue
+    result = rule
 
-            possibilities = symbols[symbol]
+    for match in matches:
+        parameter = match.group(1)
 
-            next_possibility_index = random.randint(0, len(possibilities) - 1)
+        if parameter not in parameters:
+            continue
 
-            result.append(possibilities[next_possibility_index])
-        else:
-            # otherwise consider it a static part of the word.
-            result.append(symbol)
+        possibilities = parameters[parameter]
 
-    return ''.join(result)
+        next_possibility_index = random.randint(0, len(possibilities) - 1)
+
+        pick = possibilities[next_possibility_index]
+
+        # Remove the braces surrounding the parameter
+        result = result.replace('{', '')
+        result = result.replace('}', '')
+
+        # Insert the word that was picked
+        result = result.replace(parameter, pick, 1)
+
+    return result
 
 
 def from_rules(ruleset, max_amount):
@@ -54,38 +59,36 @@ def from_rules(ruleset, max_amount):
     if json_data is None:
         raise Exception('The ruleset contains invalid JSON data.')
 
-    rules = json_data['rules']
+    rules = json_data
 
-    if '~' not in rules:
-        raise Exception('The ruleset must contain a rule definition named `~`.')
+    if 'formats' not in json_data:
+        raise Exception('The ruleset must contain a rule definition named `formats`.')
 
     results = []
 
-    pairings = rules['~']
-    symbols = rules['symbols']
+    pairings = rules['formats']
+    parameters = rules['parameters']
 
-    if len(pairings) == 0 or len(symbols) == 0:
-        # bail out since there's no rules defined.
+    if len(pairings) == 0 or len(parameters) == 0:
+        # Bail out since there's no rules defined.
         return results
 
     generated_amount = 0
     retries = 0
 
     while generated_amount < max_amount:
-        # keep going until we've generated as close to max_amount as possible.
+        # Keep going until we've generated as close to max_amount as possible.
         next_rule_index = random.randint(0, len(pairings) - 1)
 
         rule = pairings[next_rule_index]
 
-        result = from_rule(rule, symbols)
+        result = from_rule(rule, parameters)
 
         if result is not None and result in results:
-            # we have a duplicate, retry.
+            # Duplicate. Retry.
             retries += 1
 
-            # just bruteforce it - more retries = more processing time, but also higher
-            # likelyhood of reaching all combinations in case of duplicates.
-            # this could definitely be improved :)
+            # This could definitely be improved :)
             if retries == 100:
                 break
 

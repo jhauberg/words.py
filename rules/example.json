@@ -1,0 +1,31 @@
+{
+  "formats": [
+    "{Element}{Suffix}",
+    "{Element}{Suffix} {Suffix (longer)}",
+    "{Element} {Weapon}",
+    "Stupid {Weapon} {Suffix (longer)}"
+  ],
+  "parameters": {
+    "Element": [
+      "Fire",
+      "Water",
+      "Earth",
+      "Wind"
+    ],
+    "Weapon": [
+      "Axe",
+      "Sword",
+      "Staff"
+    ],
+    "Suffix": [
+      "ball",
+      "spray",
+      "gust"
+    ],
+    "Suffix (longer)": [
+      "of Doom!",
+      "of Strength",
+      "of Yo Momma"
+    ]
+  }
+}
