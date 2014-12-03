@@ -1,4 +1,4 @@
-# Generate words from simple rules.
+# Generate words from simple rules
 
 import sys
 import re
@@ -13,7 +13,7 @@ def from_rule(rule, parameters):
     if not rule or not parameters:
         return None
 
-    # Find all parameters that are wrapped in {}
+    # Find all parameters that are wrapped in curly braces (e.g. {foo})
     matches = re.finditer('\\{(.*?)\\}', rule)
 
     result = rule
@@ -42,9 +42,12 @@ def from_rule(rule, parameters):
 
 def from_rules(ruleset, max_amount):
     """
-    Generates up to `max_amount` of words from the rules defined in the file `ruleset`.
+    Generates up to `max_amount` of words from the rules
+    defined in the file `ruleset`.
 
-    It is not guaranteed to reach `max_amount` of words, in case the ruleset does not contain enough unique combinations.
+    It is not guaranteed to reach `max_amount` of words, in case the ruleset
+    does not contain enough unique combinations.
+
     In such a case, all possible combinations will be created.
     """
     input = open(ruleset, 'r')
@@ -61,23 +64,28 @@ def from_rules(ruleset, max_amount):
 
     rules = json_data
 
-    if 'formats' not in json_data:
-        raise Exception('The ruleset must contain a rule definition named `formats`.')
+    if 'formats' not in rules:
+        raise Exception('The ruleset must contain a rule definition '
+                        'named `formats`.')
 
-    results = []
+    if 'parameters' not in rules:
+        raise Exception('The ruleset must contain a parameter definitions '
+                        'named `parameters`.')
 
     pairings = rules['formats']
     parameters = rules['parameters']
 
+    results = []
+
     if len(pairings) == 0 or len(parameters) == 0:
-        # Bail out since there's no rules defined.
+        # Bail out since there's no rules defined
         return results
 
     generated_amount = 0
     retries = 0
 
     while generated_amount < max_amount:
-        # Keep going until we've generated as close to max_amount as possible.
+        # Keep going until we've generated as close to max_amount as possible
         next_rule_index = random.randint(0, len(pairings) - 1)
 
         rule = pairings[next_rule_index]
@@ -85,7 +93,7 @@ def from_rules(ruleset, max_amount):
         result = from_rule(rule, parameters)
 
         if result is not None and result in results:
-            # Duplicate. Retry.
+            # Result was a duplicate, so retry...
             retries += 1
 
             # This could definitely be improved :)
@@ -102,10 +110,12 @@ def from_rules(ruleset, max_amount):
 
 
 def main(argv):
-    if len(argv) < 2:
-        raise Exception('The first argument should be a path to a file containing ruleset data in a JSON format.')
+    if len(argv) > 1:
+        rules = argv[1]
+    else:
+        raise Exception('The first argument should be a path to a file '
+                        'containing ruleset data in a JSON format.')
 
-    rules = argv[1]
     amount = 1
 
     if len(argv) > 2:
