@@ -1,6 +1,7 @@
-# Generate words from simple rules
+# Generate strings from simple rules
 
 import sys
+import argparse
 import re
 import random
 import json
@@ -8,7 +9,7 @@ import json
 
 def from_rule(rule, parameters):
     """
-    Generates a word that matches the specified rules.
+    Generates a string that matches the specified rules.
     """
     if not rule or not parameters:
         return None
@@ -42,10 +43,10 @@ def from_rule(rule, parameters):
 
 def from_rules(ruleset, max_amount):
     """
-    Generates up to `max_amount` of words from the rules
+    Generates up to `max_amount` of strings from the rules
     defined in the file `ruleset`.
 
-    It is not guaranteed to reach `max_amount` of words, in case the ruleset
+    It is not guaranteed to reach `max_amount` of strings, in case the ruleset
     does not contain enough unique combinations.
 
     In such a case, all possible combinations will be created.
@@ -110,16 +111,26 @@ def from_rules(ruleset, max_amount):
 
 
 def main(argv):
-    if len(argv) > 1:
-        rules = argv[1]
-    else:
-        raise Exception('The first argument should be a path to a file '
-                        'containing ruleset data in a JSON format.')
+    parser = argparse.ArgumentParser(
+        description='Generate strings from simple rules')
 
-    amount = 1
+    parser.add_argument('-f', '--filename',
+                        help='The path to a JSON file containing rules',
+                        required=True)
 
-    if len(argv) > 2:
-        amount = int(argv[2])
+    parser.add_argument('-n', '--amount',
+                        type=int,
+                        default=5,
+                        help='The amount of strings to generate',
+                        required=False)
+
+    args = vars(parser.parse_args())
+
+    rules = args['filename']
+    amount = args['amount']
+
+    if amount <= 0:
+        amount = 1
 
     results = from_rules(rules, amount)
 

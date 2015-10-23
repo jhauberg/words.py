@@ -1,12 +1,12 @@
 ## Description
 
-Generate words or sentences using simply defined rules.
+Generate strings from simple rules.
 
 ## Usage
 
 Run from command line:
 
-    $ python words.py rules/example.json 5
+    $ python words.py -f rules/example.json
 
 Output:
 
@@ -58,7 +58,7 @@ Rules are defined using the following JSON structure (e.g. [rules/example.json](
 
 ## License
 
-    Copyright 2014 Jacob Hauberg Hansen.
+    Copyright 2015 Jacob Hauberg Hansen.
 
     Permission is hereby granted, free of charge, to any person obtaining a copy of
     this software and associated documentation files (the "Software"), to deal in
@@ -70,7 +70,6 @@ Rules are defined using the following JSON structure (e.g. [rules/example.json](
     The above copyright notice and this permission notice shall be included in all
     copies or substantial portions of the Software.
 
-    This part is in all uppercase.
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
     IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
     FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
